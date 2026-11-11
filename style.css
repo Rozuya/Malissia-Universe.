@@ -19,7 +19,7 @@ html,
 body,
 #app {
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -28,17 +28,28 @@ body {
   background: #030817;
 }
 
-.space-canvas {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+button {
+  font-family: inherit;
 }
 
+/* GALAXIE 3D */
+
+#space {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+/* ÉCRAN D'ACCUEIL */
+
 .welcome-screen {
-  position: relative;
-  z-index: 1;
+  position: fixed;
+  inset: 0;
+  z-index: 3;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
@@ -46,6 +57,7 @@ body {
   align-items: center;
   padding: 30px 20px;
   isolation: isolate;
+  transition: opacity 1.5s ease;
 }
 
 .welcome-screen::before {
@@ -74,6 +86,7 @@ body {
   text-align: center;
   position: relative;
   z-index: 2;
+  transition: opacity 1.5s ease, transform 1.5s ease;
 }
 
 .eyebrow {
@@ -84,7 +97,7 @@ body {
   margin-bottom: 28px;
 }
 
-h1 {
+.welcome-content h1 {
   font-family: 'Cinzel', serif;
   font-size: clamp(48px, 10vw, 100px);
   font-weight: 500;
@@ -110,7 +123,7 @@ h1 {
   transform-origin: center;
 }
 
-h2 {
+.welcome-content h2 {
   font-family: 'Cinzel', serif;
   font-size: clamp(23px, 4vw, 34px);
   font-weight: 400;
@@ -127,6 +140,8 @@ h2 {
   color: #d6e2f5;
 }
 
+/* BOUTON DE DÉPART */
+
 #start-button {
   margin-top: 42px;
   padding: 17px 36px;
@@ -138,7 +153,6 @@ h2 {
     rgba(13, 25, 48, 0.95)
   );
   color: #f7e9c9;
-  font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 2px;
@@ -153,6 +167,10 @@ h2 {
   transform: translateY(-3px);
 }
 
+#start-button:active {
+  transform: scale(0.97);
+}
+
 .signature {
   margin-top: 48px;
   color: rgba(193, 210, 239, 0.65);
@@ -160,27 +178,267 @@ h2 {
   letter-spacing: 1px;
 }
 
+/* INTERFACE DE LA GALAXIE */
+
+.galaxy-ui {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: none;
+  pointer-events: none;
+  color: white;
+}
+
+.galaxy-ui.active {
+  display: block;
+}
+
+.top-message {
+  position: absolute;
+  top: 28px;
+  left: 30px;
+  pointer-events: none;
+  text-shadow: 0 2px 15px #030817;
+}
+
+.top-message .eyebrow {
+  margin-bottom: 8px;
+}
+
+.top-message p {
+  font-size: 13px;
+  color: #d6e2f5;
+}
+
+/* AIDE À L'EXPLORATION */
+
+.controls-help {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(90%, 420px);
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  border: 1px solid rgba(201, 170, 105, 0.45);
+  border-radius: 12px;
+  background: rgba(5, 12, 30, 0.94);
+  backdrop-filter: blur(15px);
+  text-align: center;
+  pointer-events: auto;
+  transition: opacity 0.5s ease;
+}
+
+.controls-help strong {
+  color: #f3d99d;
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+}
+
+.controls-help span {
+  color: #d6e2f5;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.controls-help button,
+#message-next {
+  align-self: center;
+  margin-top: 8px;
+  padding: 12px 22px;
+  border: 1px solid #c6a66a;
+  border-radius: 4px;
+  background: rgba(35, 56, 91, 0.85);
+  color: #fff1c5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.controls-help button:hover,
+#message-next:hover {
+  background: rgba(75, 105, 155, 0.8);
+  box-shadow: 0 0 20px rgba(201, 170, 105, 0.2);
+}
+
+.controls-help.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* PANNEAUX DES DÉCOUVERTES */
+
+.message-panel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%);
+  width: min(90%, 520px);
+  padding: 35px 28px;
+  border: 1px solid rgba(201, 170, 105, 0.5);
+  border-radius: 12px;
+  background: rgba(4, 11, 28, 0.96);
+  backdrop-filter: blur(18px);
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+  pointer-events: none;
+  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.4);
+}
+
+.message-panel.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+}
+
+.message-panel .eyebrow {
+  margin-bottom: 15px;
+}
+
+.message-panel h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  font-weight: 500;
+  color: #f3d99d;
+  margin-bottom: 18px;
+}
+
+.message-panel p:not(.eyebrow) {
+  color: #dce8fb;
+  font-size: 14px;
+  line-height: 1.9;
+  font-weight: 300;
+}
+
+.close-panel {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  border: none;
+  background: transparent;
+  color: #f3d99d;
+  font-size: 30px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-panel:hover {
+  color: white;
+}
+
+/* INDICATION EN BAS DE L'ÉCRAN */
+
+.bottom-hint {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90%;
+  color: rgba(214, 226, 245, 0.65);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.bottom-hint span {
+  color: #e5c47d;
+}
+
+/* TRANSITION D'ACCUEIL */
+
+.welcome-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease;
+}
+
+/* RESPONSIVE : TÉLÉPHONE */
+
 @media (max-width: 600px) {
+  .welcome-screen {
+    padding: 25px 18px;
+  }
+
   .eyebrow {
     font-size: 9px;
     letter-spacing: 3px;
+    margin-bottom: 22px;
   }
 
-  h1 {
+  .welcome-content h1 {
     letter-spacing: 6px;
+  }
+
+  .welcome-content h2 {
+    font-size: 25px;
   }
 
   .welcome-message {
     font-size: 13px;
+    line-height: 1.9;
   }
 
   #start-button {
     padding: 15px 24px;
     font-size: 11px;
+    letter-spacing: 1.5px;
   }
 
   .signature {
     font-size: 9px;
     line-height: 1.8;
+    margin-top: 38px;
+  }
+
+  .top-message {
+    top: 18px;
+    left: 18px;
+  }
+
+  .top-message p {
+    font-size: 11px;
+  }
+
+  .controls-help {
+    padding: 22px 18px;
+  }
+
+  .controls-help span {
+    font-size: 11px;
+  }
+
+  .message-panel {
+    padding: 32px 20px;
+  }
+
+  .message-panel h2 {
+    font-size: 23px;
+  }
+
+  .message-panel p:not(.eyebrow) {
+    font-size: 13px;
+  }
+
+  .bottom-hint {
+    font-size: 9px;
+    bottom: 15px;
+  }
+}
+
+/* ACCESSIBILITÉ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
   }
 }
